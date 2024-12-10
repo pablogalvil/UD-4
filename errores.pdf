@@ -1,7 +1,0 @@
-[0m[0m
-[0m[4mE:\daw\proyectos\UD 4\index.js[24m[0m
-[0m  [2m10:17[22m  [31merror[39m  'require' is not defined  [2mno-undef[22m[0m
-[0m  [2m19:14[22m  [31merror[39m  'process' is not defined  [2mno-undef[22m[0m
-[0m[0m
-[0m[31m[1m✖ 2 problems (2 errors, 0 warnings)[22m[39m[0m
-[0m[31m[1m[22m[39m[0m
