@@ -10,12 +10,22 @@
 // eslint-disable-next-line no-undef
 const express = require("express");
 // eslint-disable-next-line no-undef
+const helmet = require("helmet");
 
 // Inicializamos la aplicación
 const app = express();
 
 // Indicamos que la aplicación puede recibir JSON (API Rest)
 app.use(express.json());
+//Uso de helmet
+app.use(
+  helmet({
+    frameguard: { action: "deny" }, // Evita que tu sitio sea embebido en iframes
+    hidePoweredBy: true, // Oculta la cabecera "X-Powered-By"
+    xssFilter: true, // Protección contra ataques XSS
+    noSniff: true, // Evita que el navegador adivine el tipo de contenido
+  })
+);
 
 // Indicamos el puerto en el que vamos a desplegar la aplicación
 // eslint-disable-next-line no-undef
