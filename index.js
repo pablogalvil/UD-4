@@ -9,6 +9,7 @@
 // Concretamente el framework express.
 // eslint-disable-next-line no-undef
 const express = require("express");
+// eslint-disable-next-line no-undef
 
 // Inicializamos la aplicación
 const app = express();
@@ -70,15 +71,10 @@ app.post("/concesionarios", async (req, res) => {
   try {
     const { nombre, direccion, coches } = req.body;
 
-    const cochesConIds = coches.map((coche) => ({
-      _id: new ObjectId(), // Generar un ObjectId único para cada coche
-      ...coche, // Mantener las propiedades del coche (modelo, cv, precio, etc.)
-    }));
-
     const nuevoConcesionario = {
       nombre,
       direccion,
-      coches: cochesConIds,
+      coches,
     };
     client
       .db("Cluster0")
@@ -205,7 +201,7 @@ app.post("/concesionarios/:id/coches", async (req, res) => {
 // Obtener un coche por ID de un concesionario
 app.get("/concesionarios/:id/coches/:idCoche", async (req, res) => {
   try {
-    const { id, cocheId } = req.params;
+    const { id, idCoche } = req.params;
     const objectId = new ObjectId(id);
     const concesionario = await client
       .db("Cluster0")
@@ -215,10 +211,10 @@ app.get("/concesionarios/:id/coches/:idCoche", async (req, res) => {
       return res.status(404).json({ mensaje: "Concesionario no encontrado" });
     }
 
+    const cocheId = parseInt(idCoche);
+
     // Buscamos el coche específico dentro del array coches
-    const coche = concesionario.coches.find(
-      (c) => c._id && c._id.toString() === cocheId
-    );
+    const coche = concesionario.coches[cocheId];
 
     // Verificar si se encontró el coche
     if (!coche) {
@@ -251,37 +247,28 @@ app.put("/concesionarios/:id/coches/:cocheId", async (req, res) => {
       return res.status(404).json({ mensaje: "Concesionario no encontrado" });
     }
 
-    // Buscar el coche específico dentro del array coches
-    const cocheIndex = concesionario.coches.findIndex(
-      (c) => c._id && c._id.toString() === cocheId
-    );
+    const idCoche = parseInt(cocheId);
 
-    // Verificar si se encontró el coche
-    if (cocheIndex === -1) {
-      return res.status(404).json({ mensaje: "Coche no encontrado" });
-    }
+    // Buscar el coche específico dentro del array coches
+    const coche = concesionario.coches[idCoche];
 
     // Actualizar los datos del coche
-    concesionario.coches[cocheIndex] = {
-      ...concesionario.coches[cocheIndex], // Mantener los otros campos del coche
-      modelo, // Actualizar el modelo
-      cv, // Actualizar los caballos de fuerza
-      precio, // Actualizar el precio
+    concesionario.coches[idCoche] = {
+      ...concesionario.coches[idCoche],
+      modelo,
+      cv,
+      precio,
     };
 
-    // Actualizar el concesionario en la base de datos
     await client
       .db("Cluster0")
       .collection("concesionarios")
-      .updateOne(
-        { _id: objectId }, // Filtrar por concesionario
-        { $set: { coches: concesionario.coches } } // Actualizar el array de coches
-      );
+      .updateOne({ _id: objectId }, { $set: { coches: concesionario.coches } });
 
     // Responder con el coche actualizado
     res.json({
       message: "Coche actualizado",
-      coche: concesionario.coches[cocheIndex],
+      coche: concesionario.coches[coche],
     });
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener coches", error });
@@ -305,18 +292,10 @@ app.delete("/concesionarios/:id/coches/:cocheId", async (req, res) => {
       return res.status(404).json({ mensaje: "Concesionario no encontrado" });
     }
 
-    // Buscar el índice del coche dentro del array coches
-    const cocheIndex = concesionario.coches.findIndex(
-      (c) => c._id && c._id.toString() === cocheId
-    );
-
-    // Verificar si se encontró el coche
-    if (cocheIndex === -1) {
-      return res.status(404).json({ mensaje: "Coche no encontrado" });
-    }
+    const idCoche = parseInt(cocheId);
 
     // Eliminar el coche del array
-    concesionario.coches.splice(cocheIndex, 1);
+    concesionario.coches.splice(idCoche, 1);
 
     // Actualizar el concesionario en la base de datos
     await client
@@ -341,3 +320,6 @@ app.delete("/concesionarios/:id/coches/:cocheId", async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor desplegado en puerto: ${port}`);
 });
+
+let letra = [9, 3, 3];
+letra.splice;
