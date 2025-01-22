@@ -11,6 +11,10 @@
 const express = require("express");
 // eslint-disable-next-line no-undef
 const helmet = require("helmet");
+// eslint-disable-next-line no-undef
+const swaggerUi = require("swagger-ui-express");
+// eslint-disable-next-line no-undef
+const swaggerDocument = require("./swagger.json");
 
 // Inicializamos la aplicación
 const app = express();
@@ -26,6 +30,8 @@ app.use(
     noSniff: true, // Evita que el navegador adivine el tipo de contenido
   })
 );
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Indicamos el puerto en el que vamos a desplegar la aplicación
 // eslint-disable-next-line no-undef
